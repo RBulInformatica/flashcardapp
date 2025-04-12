@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeerDanFlashcards</title>
+    <script defer src="/static/script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 50px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+        #flashcards-table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        #flashcards-table th, #flashcards-table td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .flashcard {
+            background-color: white;
+            width: 300px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">MeerDanFlashcards</div>
+    
+    <div id="start-menu" class="menu-container">
+        <button class="button" onclick="showExamMenu()">VWO Eindexamen</button>
+        <button class="button" onclick="showOwnFlashcards()">Eigen Flashcards</button>
+        <button class="button" onclick="showDevelopmentBlog()">Ontwikkelings blog</button>
+    </div>
+    
+    <div id="exam-menu" class="menu-container hidden">
+        <h2>Kies een vak</h2>
+        <button class="button" onclick="showBiologyTopics()">Biologie</button>
+        <button class="button" disabled>Natuurkunde (Nog niet beschikbaar)</button>
+        <button class="button" disabled>Scheikunde (Nog niet beschikbaar)</button>
+        <button class="button" onclick="goBack()">Terug</button>
+    </div>
+    
+    <div id="biology-topics" class="menu-container hidden">
+        <h2>Biologie Onderwerpen</h2>
+        <button class="button" onclick="showImmuneSystemOptions()">Immuunsysteem</button>
+        <button class="button" disabled>Overige onderwerpen (Nog niet beschikbaar)</button>
+        <button class="button" onclick="showExamMenu()">Terug</button>
+    </div>
+    
+    <div id="immune-system-options" class="menu-container hidden">
+        <h2>Immuunsysteem</h2>
+        <button class="button" onclick="showFlashcards()">Zie Begrippen</button>
+        <button class="button" onclick="startPractice()">Oefenen</button>
+        <button class="button" onclick="startAIPractice()">Oefenen met AI</button>
+        <button class="button" onclick="showBiologyTopics()">Terug</button>
+    </div>
+    
+    <div id="flashcards-container" class="menu-container hidden">
+        <h2>Begrippen en Betekenissen</h2>
+        <table id="flashcards-table">
+            <thead>
+                <tr>
+                    <th>Begrip</th>
+                    <th>Betekenis</th>
+                </tr>
+            </thead>
+            <tbody id="flashcards-body"></tbody>
+        </table>
+        <button class="button" onclick="showImmuneSystemOptions()">Terug</button>
+    </div>
+    
+    <div id="practice-container" class="menu-container hidden">
+        <h2>Oefenen</h2>
+        <div id="flashcard" class="flashcard" onclick="flipCard()">Klik om om te draaien</div>
+        <button class="button" onclick="submitAnswer(true)">Juist</button>
+        <button class="button" onclick="submitAnswer(false)">Onjuist</button>
+        <button class="button" onclick="showImmuneSystemOptions()">Terug</button>
+    </div>
+
+    <div id="ai-practice-container" class="menu-container hidden">
+        <h2>AI-gebaseerde Oefening</h2>
+        <div id="ai-flashcard" class="flashcard"></div>
+        <input type="text" id="ai-answer" placeholder="Typ je antwoord hier">
+        <button class="button" onclick="submitAIAnswer()">Controleer met AI</button>
+        <!-- Feedback container -->
+        <div id="feedback" style="font-size: 16px; color: red; margin-top: 10px;"></div>
+        <button class="button" onclick="showImmuneSystemOptions()">Terug</button>
+    </div>
+
+    <div id="results-container" class="menu-container hidden"></div>
+</body>
+</html>
