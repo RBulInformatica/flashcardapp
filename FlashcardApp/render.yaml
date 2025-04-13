@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: flashcard-app
+    name: MeerDanFlashcards
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
