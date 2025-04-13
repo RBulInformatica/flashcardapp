@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer, util 
 from flask import Flask, jsonify, render_template, request
 import sqlite3
 import random
@@ -68,6 +68,3 @@ def check_answer():
         feedback = f"Je antwoord was niet helemaal correct. De semantische gelijkenis was {similarity:.2f}. Probeer het opnieuw."
 
     return jsonify({"correct": is_correct, "feedback": feedback, "similarity": similarity})
-
-if __name__ == '__main__':
-    app.run(debug=True)
