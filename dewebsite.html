@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeerDanFlashcards</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>MeerDanFlashcards</h1>
+
+    <h2>Nieuw begrip toevoegen</h2>
+    <form id="addForm">
+        <input type="text" id="begrip" placeholder="Begrip" required>
+        <input type="text" id="definitie" placeholder="Definitie" required>
+        <input type="text" id="categorie" placeholder="Categorie">
+        <button type="submit">Toevoegen</button>
+    </form>
+
+    <h2>Alle begrippen</h2>
+    <ul id="begrippenlijst"></ul>
+
+    <script>
+        // Functie om begrippen op te halen
+        async function fetchBegrippen() {
+            const response = await fetch('/begrippen'); // Vraag begrippen op via de backend
+            const data = await response.json();
+            const lijst = document.getElementById('begrippenlijst');
+            lijst.innerHTML = ''; // Maak lijst leeg
+            data.forEach(begrip => {
+                const item = document.createElement('li');
+                item.textContent = `${begrip.begrip}: ${begrip.definitie} (${begrip.categorie})`;
+                lijst.appendChild(item);
+            });
+        }
+
+        // Begrip toevoegen
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const begrip = document.getElementById('begrip').value;
+            const definitie = document.getElementById('definitie').value;
+            const categorie = document.getElementById('categorie').value;
+
+            // Stuur begrip naar backend
+            await fetch('/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ begrip, definitie, categorie })
+            });
+
+            fetchBegrippen(); // Update de lijst
+        });
+
+        // Laad begrippen bij het starten van de pagina
+        fetchBegrippen();
+    </script>
+</body>
+</html>

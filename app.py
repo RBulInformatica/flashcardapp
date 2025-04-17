@@ -2,9 +2,6 @@ from sentence_transformers import SentenceTransformer, util
 from flask import Flask, jsonify, render_template, request
 import sqlite3
 import random
-import os
-if not os.path.exists("database.db"):
-    raise FileNotFoundError("Database ontbreekt in de deployment-omgeving!")
 
 app = Flask(__name__)
 DATABASE = "database.db"
@@ -73,6 +70,4 @@ def check_answer():
     return jsonify({"correct": is_correct, "feedback": feedback, "similarity": similarity})
 
 if __name__ == '__main__':
-    from waitress import serve
-    port = int(os.environ.get("PORT", 5000))
-    serve(app, host='0.0.0.0', port=port)
+    app.run(debug=True)
