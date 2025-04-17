@@ -2,7 +2,9 @@ from sentence_transformers import SentenceTransformer, util
 from flask import Flask, jsonify, render_template, request
 import sqlite3
 import random
-import os  # <-- Dit was vergeten
+import os
+if not os.path.exists("database.db"):
+    raise FileNotFoundError("Database ontbreekt in de deployment-omgeving!")
 
 app = Flask(__name__)
 DATABASE = "database.db"
