@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     window.submitAIAnswer = submitAIAnswer;
     window.retryIncorrect = retryIncorrect;
     window.showDevelopmentBlog = showDevelopmentBlog;
+    window.goBackToStart = goBackToStart;
 
-    // Laad de flashcards bij het laden van de pagina
-    fetchFlashcards();
+    fetchFlashcards();  // Optioneel: laad op startpagina
 });
 
 let flashcards = [];
@@ -29,7 +29,7 @@ function showExamMenu() {
 }
 
 function showOwnFlashcards() {
-    // Voeg hier de logica toe om eigen flashcards te tonen
+    // Voeg logica toe voor eigen flashcards
 }
 
 function showBiologyTopics() {
@@ -38,9 +38,10 @@ function showBiologyTopics() {
 }
 
 function showImmuneSystemOptions() {
-    document.getElementById('flashcards-container').classList.add('hidden'); // Verberg begrippenlijst
-    document.getElementById('practice-container').classList.add('hidden'); // Verberg oefenmodus als die open was
-    document.getElementById('ai-practice-container').classList.add('hidden'); // Verberg AI oefenmodus als die open was
+    document.getElementById('flashcards-container').classList.add('hidden');
+    document.getElementById('practice-container').classList.add('hidden');
+    document.getElementById('ai-practice-container').classList.add('hidden');
+    document.getElementById('results-container').classList.add('hidden');
     document.getElementById('immune-system-options').classList.remove('hidden');
 }
 
@@ -63,25 +64,18 @@ function startAIPractice() {
 }
 
 function goBack() {
-    // Verberg alle secties behalve het hoofdmenu
-    document.getElementById("vak-sectie").classList.add("hidden");
-    document.getElementById("onderwerp-sectie").classList.add("hidden");
-    document.getElementById("flashcard-sectie").classList.add("hidden");
-    document.getElementById("antwoord-sectie").classList.add("hidden");
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("gebruiker-antwoord").value = "";
+    document.getElementById("start-menu").classList.remove("hidden");
+    document.getElementById("exam-menu").classList.add("hidden");
+    document.getElementById("biology-topics").classList.add("hidden");
+    document.getElementById("immune-system-options").classList.add("hidden");
+    document.getElementById("flashcards-container").classList.add("hidden");
+    document.getElementById("practice-container").classList.add("hidden");
+    document.getElementById("ai-practice-container").classList.add("hidden");
+    document.getElementById("results-container").classList.add("hidden");
 
-    // Leeg de flashcards-tabel (anders blijven ze staan)
-    document.getElementById("flashcards-body").innerHTML = "";
-
-    // Verberg flashcards sectie
-    document.getElementById("flashcards").classList.add("hidden");
-
-    // Toon hoofdmenu opnieuw
-    document.getElementById("main-menu").classList.remove("hidden");
-
-    // Reset opgeslagen onderwerp
-    geselecteerdOnderwerp = null;
+    // Leeg flashcard-tabel
+    const list = document.getElementById("flashcards-body");
+    if (list) list.innerHTML = "";
 }
 
 function flipCard() {
@@ -111,27 +105,45 @@ function submitAnswer(isCorrect) {
 }
 
 function fetchFlashcards() {
-    fetch("http://127.0.0.1:5000/flashcards")
-        .then(response => response.json())
+    fetch("/flashcards")
+        .then(response => {
+            if (!response.ok) throw new Error("Geen geldige respons");
+            return response.json();
+        })
         .then(data => {
+            console.log("Ontvangen flashcards:", data);
             const list = document.getElementById("flashcards-body");
+            if (!list) return;
             list.innerHTML = "";
+
+            if (data.length === 0) {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+                cell.colSpan = 2;
+                cell.textContent = "Geen begrippen gevonden.";
+                row.appendChild(cell);
+                list.appendChild(row);
+                return;
+            }
+
             data.forEach(flashcard => {
                 const row = document.createElement("tr");
                 const termCell = document.createElement("td");
                 const definitionCell = document.createElement("td");
-                termCell.textContent = flashcard.term; // Zorg ervoor dat de JSON-velden overeenkomen met de databasevelden
-                definitionCell.textContent = flashcard.definition; // Zorg ervoor dat de JSON-velden overeenkomen met de databasevelden
+                termCell.textContent = flashcard.term;
+                definitionCell.textContent = flashcard.definition;
                 row.appendChild(termCell);
                 row.appendChild(definitionCell);
                 list.appendChild(row);
             });
         })
-        .catch(error => console.error("Error fetching flashcards:", error));
+        .catch(error => {
+            console.error("Fout bij ophalen flashcards:", error);
+        });
 }
 
 function fetchFlashcardsForPractice() {
-    fetch("http://127.0.0.1:5000/flashcards")
+    fetch("/flashcards")
         .then(response => response.json())
         .then(data => {
             flashcards = data;
@@ -140,13 +152,13 @@ function fetchFlashcardsForPractice() {
             incorrectAnswers = [];
             showNextFlashcard();
         })
-        .catch(error => console.error("Error fetching flashcards:", error));
+        .catch(error => console.error("Error fetching flashcards for practice:", error));
 }
 
 function showNextFlashcard() {
     const flashcard = flashcards[currentFlashcardIndex];
     if (!flashcard) return;
-    
+
     const normalFlashcardElement = document.getElementById('flashcard');
     const aiFlashcardElement = document.getElementById('ai-flashcard');
 
@@ -181,7 +193,7 @@ function submitAIAnswer() {
     const userAnswer = document.getElementById("ai-answer").value;
     const flashcard = flashcards[currentFlashcardIndex];
 
-    fetch("http://127.0.0.1:5000/check_answer", {
+    fetch("/check_answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -191,13 +203,10 @@ function submitAIAnswer() {
     })
     .then(response => response.json())
     .then(data => {
-        const feedback = data.feedback;  // Haal de feedback op uit het antwoord
+        const feedback = data.feedback;
         const isCorrect = data.correct;
-
-        // Toon de feedback aan de gebruiker
         document.getElementById("feedback").textContent = feedback;
 
-        // Als het antwoord correct is, ga naar de volgende flashcard
         if (isCorrect) {
             currentFlashcardIndex++;
             if (currentFlashcardIndex < flashcards.length) {
@@ -230,5 +239,5 @@ function showDevelopmentBlog() {
 }
 
 function goBackToStart() {
-    location.reload(); // Herlaad de pagina om terug te gaan naar het startmenu
+    location.reload();
 }
