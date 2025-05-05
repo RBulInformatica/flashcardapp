@@ -6,3 +6,4 @@ scipy
 gunicorn
 waitress
 flask_sqlalchemy
+flask_cors
