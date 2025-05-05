@@ -3,6 +3,8 @@ from sentence_transformers import SentenceTransformer, util
 import sqlite3
 import random
 import os
+if not os.path.exists("database.db"):
+    import init_db  # zorgt dat de database aangemaakt wordt uit CSV
 
 # Controleer of database aanwezig is
 if not os.path.exists("database.db"):
