@@ -1,27 +1,36 @@
 import sqlite3
 import csv
+import os
 
-DB_NAME = "database.db"
-CSV_FILE = "afweerbegrippen.csv"
+DB_PATH = "database.db"
+CSV_PATH = "afweerbegrippen.csv"  # vervang dit door de naam van je CSV-bestand
 
-# Maak database en tabel aan
-conn = sqlite3.connect(DB_NAME)
-cursor = conn.cursor()
+def init_db():
+    if os.path.exists(DB_PATH):
+        print("Database bestaat al. Overslaan.")
+        return
 
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS immuunsysteem (
-        Begrip TEXT NOT NULL,
-        Betekenis TEXT NOT NULL
-    )
-""")
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
 
-# Vul de tabel met data uit CSV
-with open(CSV_FILE, newline='', encoding='utf-8') as csvfile:
-    reader = csv.DictReader(csvfile)
-    rows = [(row['Begrip'], row['Betekenis']) for row in reader]
+    # Maak de tabel aan
+    c.execute('''
+        CREATE TABLE immuunsysteem (
+            Begrip TEXT,
+            Betekenis TEXT
+        )
+    ''')
 
-cursor.executemany("INSERT INTO immuunsysteem (Begrip, Betekenis) VALUES (?, ?)", rows)
-conn.commit()
-conn.close()
+    # Voeg data toe vanuit CSV
+    with open(CSV_PATH, newline='', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if len(row) == 2:
+                c.execute("INSERT INTO immuunsysteem (Begrip, Betekenis) VALUES (?, ?)", (row[0], row[1]))
 
-print("Database succesvol opgebouwd vanuit CSV.")
+    conn.commit()
+    conn.close()
+    print("Database aangemaakt.")
+
+if __name__ == '__main__':
+    init_db()
