@@ -1,234 +1,125 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Koppel de functies aan de knoppen
-    window.showExamMenu = showExamMenu;
-    window.showOwnFlashcards = showOwnFlashcards;
-    window.showBiologyTopics = showBiologyTopics;
-    window.showImmuneSystemOptions = showImmuneSystemOptions;
-    window.showFlashcards = showFlashcards;
-    window.startPractice = startPractice;
-    window.startAIPractice = startAIPractice;
-    window.goBack = goBack;
-    window.flipCard = flipCard;
-    window.submitAnswer = submitAnswer;
-    window.submitAIAnswer = submitAIAnswer;
-    window.retryIncorrect = retryIncorrect;
-    window.showDevelopmentBlog = showDevelopmentBlog;
-
-    // Laad de flashcards bij het laden van de pagina
-    fetchFlashcards();
-});
-
-let flashcards = [];
-let currentFlashcardIndex = 0;
-let correctAnswers = [];
-let incorrectAnswers = [];
-
 function showExamMenu() {
-    document.getElementById('start-menu').classList.add('hidden');
-    document.getElementById('exam-menu').classList.remove('hidden');
+    hideAll();
+    document.getElementById("exam-menu").classList.remove("hidden");
 }
 
 function showOwnFlashcards() {
-    // Voeg hier de logica toe om eigen flashcards te tonen
+    alert("Eigen flashcards zijn nog niet beschikbaar.");
+}
+
+function showDevelopmentBlog() {
+    alert("De ontwikkelingsblog is nog in aanbouw.");
 }
 
 function showBiologyTopics() {
-    document.getElementById('exam-menu').classList.add('hidden');
-    document.getElementById('biology-topics').classList.remove('hidden');
+    hideAll();
+    document.getElementById("biology-topics").classList.remove("hidden");
 }
 
 function showImmuneSystemOptions() {
-    document.getElementById('flashcards-container').classList.add('hidden'); // Verberg begrippenlijst
-    document.getElementById('practice-container').classList.add('hidden'); // Verberg oefenmodus als die open was
-    document.getElementById('ai-practice-container').classList.add('hidden'); // Verberg AI oefenmodus als die open was
-    document.getElementById('immune-system-options').classList.remove('hidden');
+    hideAll();
+    document.getElementById("immune-system-options").classList.remove("hidden");
 }
 
 function showFlashcards() {
-    document.getElementById('immune-system-options').classList.add('hidden');
-    document.getElementById('flashcards-container').classList.remove('hidden');
-    fetchFlashcards();
+    hideAll();
+    document.getElementById("flashcards-container").classList.remove("hidden");
+
+    fetch("/flashcards")
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("flashcards-body");
+            tbody.innerHTML = "";
+            data.forEach(item => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${item.term}</td><td>${item.definition}</td>`;
+                tbody.appendChild(row);
+            });
+        });
 }
+
+let currentFlashcard = null;
+let showingDefinition = false;
 
 function startPractice() {
-    document.getElementById('immune-system-options').classList.add('hidden');
-    document.getElementById('practice-container').classList.remove('hidden');
-    fetchFlashcardsForPractice();
+    hideAll();
+    document.getElementById("practice-container").classList.remove("hidden");
+    loadNewFlashcard();
 }
 
-function startAIPractice() {
-    document.getElementById('immune-system-options').classList.add('hidden');
-    document.getElementById('ai-practice-container').classList.remove('hidden');
-    fetchFlashcardsForPractice();
-}
-
-function goBack() {
-    // Verberg alle secties behalve het hoofdmenu
-    document.getElementById("vak-sectie").classList.add("hidden");
-    document.getElementById("onderwerp-sectie").classList.add("hidden");
-    document.getElementById("flashcard-sectie").classList.add("hidden");
-    document.getElementById("antwoord-sectie").classList.add("hidden");
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("gebruiker-antwoord").value = "";
-
-    // Leeg de flashcards-tabel (anders blijven ze staan)
-    document.getElementById("flashcards-body").innerHTML = "";
-
-    // Verberg flashcards sectie
-    document.getElementById("flashcards").classList.add("hidden");
-
-    // Toon hoofdmenu opnieuw
-    document.getElementById("main-menu").classList.remove("hidden");
-
-    // Reset opgeslagen onderwerp
-    geselecteerdOnderwerp = null;
+function loadNewFlashcard() {
+    fetch("/random_flashcard")
+        .then(res => res.json())
+        .then(data => {
+            currentFlashcard = data;
+            showingDefinition = false;
+            document.getElementById("flashcard").textContent = currentFlashcard.term;
+        });
 }
 
 function flipCard() {
-    const flashcard = document.getElementById('flashcard');
-    if (flashcard.dataset.flipped === 'true') {
-        flashcard.textContent = flashcard.dataset.term;
-        flashcard.dataset.flipped = 'false';
-    } else {
-        flashcard.textContent = flashcard.dataset.definition;
-        flashcard.dataset.flipped = 'true';
+    if (currentFlashcard) {
+        if (showingDefinition) {
+            document.getElementById("flashcard").textContent = currentFlashcard.term;
+        } else {
+            document.getElementById("flashcard").textContent = currentFlashcard.definition;
+        }
+        showingDefinition = !showingDefinition;
     }
 }
 
-function submitAnswer(isCorrect) {
-    const flashcard = flashcards[currentFlashcardIndex];
-    if (isCorrect) {
-        correctAnswers.push(flashcard);
-    } else {
-        incorrectAnswers.push(flashcard);
-    }
-    currentFlashcardIndex++;
-    if (currentFlashcardIndex < flashcards.length) {
-        showNextFlashcard();
-    } else {
-        showResults();
-    }
+function submitAnswer(correct) {
+    // Dit is placeholderlogica voor handmatige evaluatie
+    alert(correct ? "Juist gekozen!" : "Onjuist gekozen!");
+    loadNewFlashcard();
 }
 
-function fetchFlashcards() {
-    fetch("http://127.0.0.1:5000/flashcards")
-        .then(response => response.json())
+function startAIPractice() {
+    hideAll();
+    document.getElementById("ai-practice-container").classList.remove("hidden");
+    loadNewAIFlashcard();
+}
+
+let currentAIFlashcard = null;
+
+function loadNewAIFlashcard() {
+    fetch("/random_flashcard")
+        .then(res => res.json())
         .then(data => {
-            const list = document.getElementById("flashcards-body");
-            list.innerHTML = "";
-            data.forEach(flashcard => {
-                const row = document.createElement("tr");
-                const termCell = document.createElement("td");
-                const definitionCell = document.createElement("td");
-                termCell.textContent = flashcard.term; // Zorg ervoor dat de JSON-velden overeenkomen met de databasevelden
-                definitionCell.textContent = flashcard.definition; // Zorg ervoor dat de JSON-velden overeenkomen met de databasevelden
-                row.appendChild(termCell);
-                row.appendChild(definitionCell);
-                list.appendChild(row);
-            });
-        })
-        .catch(error => console.error("Error fetching flashcards:", error));
-}
-
-function fetchFlashcardsForPractice() {
-    fetch("http://127.0.0.1:5000/flashcards")
-        .then(response => response.json())
-        .then(data => {
-            flashcards = data;
-            currentFlashcardIndex = 0;
-            correctAnswers = [];
-            incorrectAnswers = [];
-            showNextFlashcard();
-        })
-        .catch(error => console.error("Error fetching flashcards:", error));
-}
-
-function showNextFlashcard() {
-    const flashcard = flashcards[currentFlashcardIndex];
-    if (!flashcard) return;
-    
-    const normalFlashcardElement = document.getElementById('flashcard');
-    const aiFlashcardElement = document.getElementById('ai-flashcard');
-
-    if (normalFlashcardElement) {
-        normalFlashcardElement.textContent = flashcard.term;
-        normalFlashcardElement.dataset.term = flashcard.term;
-        normalFlashcardElement.dataset.definition = flashcard.definition;
-        normalFlashcardElement.dataset.flipped = 'false';
-    }
-
-    if (aiFlashcardElement) {
-        aiFlashcardElement.textContent = flashcard.term;
-    }
-}
-
-function showResults() {
-    const resultsContainer = document.getElementById('results-container');
-    resultsContainer.innerHTML = `
-        <h2>Resultaten</h2>
-        <p>Goed: ${correctAnswers.length}</p>
-        <p>Fout: ${incorrectAnswers.length}</p>
-        <button class="button" onclick="startPractice()">Oefenen</button>
-        <button class="button" onclick="startAIPractice()">Oefenen met AI</button>
-        <button class="button" onclick="retryIncorrect()">Herhaal foute begrippen</button>
-        <button class="button" onclick="showImmuneSystemOptions()">Terug</button>
-    `;
-    document.getElementById('practice-container').classList.add('hidden');
-    resultsContainer.classList.remove('hidden');
+            currentAIFlashcard = data;
+            document.getElementById("ai-flashcard").textContent = currentAIFlashcard.term;
+            document.getElementById("ai-answer").value = "";
+            document.getElementById("feedback").textContent = "";
+        });
 }
 
 function submitAIAnswer() {
     const userAnswer = document.getElementById("ai-answer").value;
-    const flashcard = flashcards[currentFlashcardIndex];
 
-    fetch("http://127.0.0.1:5000/check_answer", {
+    fetch("/check_answer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({
             user_answer: userAnswer,
-            correct_answer: flashcard.definition
+            correct_answer: currentAIFlashcard.definition
         })
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-        const feedback = data.feedback;  // Haal de feedback op uit het antwoord
-        const isCorrect = data.correct;
-
-        // Toon de feedback aan de gebruiker
-        document.getElementById("feedback").textContent = feedback;
-
-        // Als het antwoord correct is, ga naar de volgende flashcard
-        if (isCorrect) {
-            currentFlashcardIndex++;
-            if (currentFlashcardIndex < flashcards.length) {
-                showNextFlashcard();
-            } else {
-                showResults();
-            }
+        document.getElementById("feedback").textContent = data.feedback;
+        if (data.correct) {
+            setTimeout(loadNewAIFlashcard, 2000);
         }
-    })
-    .catch(error => console.error("Error checking answer:", error));
+    });
 }
 
-function retryIncorrect() {
-    flashcards = incorrectAnswers;
-    currentFlashcardIndex = 0;
-    correctAnswers = [];
-    incorrectAnswers = [];
-    document.getElementById('results-container').classList.add('hidden');
-    document.getElementById('practice-container').classList.remove('hidden');
-    showNextFlashcard();
+function goBack() {
+    hideAll();
+    document.getElementById("start-menu").classList.remove("hidden");
 }
 
-function showDevelopmentBlog() {
-    const startMenu = document.getElementById('start-menu');
-    startMenu.innerHTML = `
-        <h2>Ontwikkelings blog</h2>
-        <p>Richard Feynman zei ooit dat als je iets begrijpt, je het moet kunnen uitleggen. Met deze nieuwe manier van flashcards leren, kan je dit toepassen.</p>
-        <button class="button" onclick="goBackToStart()">Terug</button>
-    `;
-}
-
-function goBackToStart() {
-    location.reload(); // Herlaad de pagina om terug te gaan naar het startmenu
+function hideAll() {
+    document.querySelectorAll(".menu-container").forEach(el => el.classList.add("hidden"));
 }

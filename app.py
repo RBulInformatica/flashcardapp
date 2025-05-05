@@ -1,28 +1,23 @@
 from flask import Flask, jsonify, render_template, request
 from sentence_transformers import SentenceTransformer, util
-import sqlite3
+import csv
 import random
 import os
-if not os.path.exists("database.db"):
-    import init_db  # zorgt dat de database aangemaakt wordt uit CSV
-
-from init_db import init_db
-init_db()
-
-# Controleer of database aanwezig is
-if not os.path.exists("database.db"):
-    raise FileNotFoundError("Database ontbreekt in de deployment-omgeving!")
 
 app = Flask(__name__)
-DATABASE = "database.db"
-
-# Laad het taalmodel
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+# ✅ Laad flashcards uit CSV-bestand (gescheiden door ;)
+def load_flashcards_from_csv():
+    flashcards = []
+    with open('flashcards.csv', newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        for row in reader:
+            flashcards.append({
+                "term": row["Begrip"],
+                "definition": row["Betekenis"]
+            })
+    return flashcards
 
 @app.route('/')
 def index():
@@ -30,23 +25,15 @@ def index():
 
 @app.route('/flashcards', methods=['GET'])
 def get_flashcards():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT Begrip, Betekenis FROM immuunsysteem ORDER BY RANDOM()")
-    flashcards = cursor.fetchall()
-    conn.close()
-    return jsonify([{"term": row["Begrip"], "definition": row["Betekenis"]} for row in flashcards])
+    flashcards = load_flashcards_from_csv()
+    random.shuffle(flashcards)
+    return jsonify(flashcards)
 
 @app.route('/random_flashcard', methods=['GET'])
 def get_random_flashcard():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT Begrip, Betekenis FROM immuunsysteem ORDER BY RANDOM() LIMIT 1")
-    flashcard = cursor.fetchone()
-    conn.close()
-
-    if flashcard:
-        return jsonify({"term": flashcard["Begrip"], "definition": flashcard["Betekenis"]})
+    flashcards = load_flashcards_from_csv()
+    if flashcards:
+        return jsonify(random.choice(flashcards))
     else:
         return jsonify({"error": "Geen flashcards beschikbaar"}), 404
 
@@ -64,15 +51,11 @@ def check_answer():
     user_answer = data.get("user_answer")
     correct_answer = data.get("correct_answer")
 
-    # Bereken de semantische gelijkenis
     embedding1 = model.encode(user_answer, convert_to_tensor=True)
     embedding2 = model.encode(correct_answer, convert_to_tensor=True)
     similarity = util.pytorch_cos_sim(embedding1, embedding2).item()
 
-    # Stel een drempelwaarde in (bijv. 0.75 = redelijk correct)
     is_correct = similarity > 0.75
-
-    # Geef feedback op basis van de semantische gelijkenis
     if is_correct:
         feedback = "Goed gedaan! Je antwoord is correct."
     else:
