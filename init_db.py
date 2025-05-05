@@ -23,7 +23,7 @@ def init_db():
 
     # Voeg data toe vanuit CSV
     with open(CSV_PATH, newline='', encoding='utf-8') as csvfile:
-        reader = csv.reader(csvfile)
+        reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             if len(row) == 2:
                 c.execute("INSERT INTO immuunsysteem (Begrip, Betekenis) VALUES (?, ?)", (row[0], row[1]))

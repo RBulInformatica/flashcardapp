@@ -6,6 +6,9 @@ import os
 if not os.path.exists("database.db"):
     import init_db  # zorgt dat de database aangemaakt wordt uit CSV
 
+from init_db import init_db
+init_db()
+
 # Controleer of database aanwezig is
 if not os.path.exists("database.db"):
     raise FileNotFoundError("Database ontbreekt in de deployment-omgeving!")
