@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Nieuwe Flashcard Toevoegen</title>
+</head>
+<body>
+    <h1>Voeg een nieuwe flashcard toe</h1>
+    <form method="POST">
+        <label for="term">Begrip:</label><br>
+        <input type="text" id="term" name="term" required><br><br>
+
+        <label for="definition">Betekenis:</label><br>
+        <input type="text" id="definition" name="definition" required><br><br>
+
+        <input type="submit" value="Opslaan">
+    </form>
+    <p><a href="{{ url_for('index') }}">← Terug naar home</a></p>
+</body>
+</html>

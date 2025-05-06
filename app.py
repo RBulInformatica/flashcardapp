@@ -4,12 +4,16 @@ import csv
 import os
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+# Zorg dat relatieve paden vanuit de instance-folder gebruikt worden
+app = Flask(__name__, instance_relative_config=True)
+
+# Upload instellingen
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'csv'}
 
-# Gebruik persistente opslaglocatie
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/data/flashcards.db'
+# Pad naar de database in de instance-folder
+os.makedirs(app.instance_path, exist_ok=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.instance_path, 'flashcards.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
