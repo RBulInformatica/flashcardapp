@@ -130,5 +130,25 @@
     </div>
 
     <div id="results-container" class="menu-container hidden"></div>
+
+    <div id="own-flashcards-container" class="menu-container hidden">
+        <h2>Eigen Flashcards Toevoegen</h2>
+        <form id="flashcard-form">
+            <input type="text" id="term" name="term" placeholder="Begrip" required>
+            <input type="text" id="definition" name="definition" placeholder="Betekenis" required>
+            <button type="submit" class="button">Voeg Flashcard Toe</button>
+        </form>
+        <button class="button" onclick="goBack()">Terug</button>
+    </div>
+
+    <div id="csv-upload-container" class="menu-container hidden">
+        <h2>CSV-bestand Uploaden</h2>
+        <form id="csv-upload-form" enctype="multipart/form-data">
+            <input type="file" name="csvfile" accept=".csv" required>
+            <button type="submit" class="button">Upload CSV</button>
+        </form>
+        <button class="button" onclick="goBack()">Terug</button>
+    </div>
+
 </body>
 </html>

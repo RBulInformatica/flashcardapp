@@ -1,94 +1,72 @@
-from flask import Flask, jsonify, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-from sentence_transformers import SentenceTransformer, util
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from werkzeug.utils import secure_filename
 import csv
-import random
 import os
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-CORS(app)
-
-# Configuratie voor SQLite (Render ondersteunt dit standaard)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['ALLOWED_EXTENSIONS'] = {'csv'}
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flashcards.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
-# Laden van het semantische model
-model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-
-# Model voor uitbreiding in de toekomst (momenteel niet in gebruik)
+# Model voor flashcards
 class Flashcard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    term = db.Column(db.String(255), nullable=False)
-    definition = db.Column(db.String(255), nullable=False)
+    term = db.Column(db.String(200), nullable=False)
+    definition = db.Column(db.String(500), nullable=False)
 
-# Flashcards laden vanuit CSV
-def load_flashcards_from_csv():
-    flashcards = []
-    try:
-        with open('flashcards.csv', newline='', encoding='utf-8') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter=';')
-            for row in reader:
-                flashcards.append({
-                    "term": row["Begrip"],
-                    "definition": row["Betekenis"]
-                })
-    except FileNotFoundError:
-        print("⚠️  flashcards.csv niet gevonden.")
-    return flashcards
+    def __repr__(self):
+        return f"Flashcard('{self.term}', '{self.definition}')"
+
+# Zorg ervoor dat de database wordt aangemaakt als deze nog niet bestaat
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/flashcards', methods=['GET'])
-def get_flashcards():
-    flashcards = load_flashcards_from_csv()
-    random.shuffle(flashcards)
-    return jsonify(flashcards)
+@app.route('/add_flashcard', methods=['GET', 'POST'])
+def add_flashcard():
+    if request.method == 'POST':
+        term = request.form['term']
+        definition = request.form['definition']
+        new_flashcard = Flashcard(term=term, definition=definition)
+        db.session.add(new_flashcard)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('add_flashcard.html')
 
-@app.route('/random_flashcard', methods=['GET'])
-def get_random_flashcard():
-    flashcards = load_flashcards_from_csv()
-    if flashcards:
-        return jsonify(random.choice(flashcards))
-    else:
-        return jsonify({"error": "Geen flashcards beschikbaar"}), 404
+@app.route('/upload_csv', methods=['GET', 'POST'])
+def upload_csv():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'Geen bestand geselecteerd!', 400
+        file = request.files['file']
+        if file.filename == '':
+            return 'Geen bestand geselecteerd!', 400
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # CSV-bestand verwerken en flashcards toevoegen aan de database
+            process_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('index'))
+    return render_template('upload_csv.html')
 
-@app.route('/evaluate_answer', methods=['POST'])
-def evaluate_answer():
-    data = request.json
-    user_answer = data.get("user_answer")
-    correct_answer = data.get("correct_answer")
-    is_correct = user_answer.strip().lower() == correct_answer.strip().lower()
-    return jsonify({"correct": is_correct})
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-@app.route('/check_answer', methods=['POST'])
-def check_answer():
-    data = request.json
-    user_answer = data.get("user_answer")
-    correct_answer = data.get("correct_answer")
+def process_csv(filepath):
+    with open(filepath, newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        for row in reader:
+            term = row['Begrip']
+            definition = row['Betekenis']
+            new_flashcard = Flashcard(term=term, definition=definition)
+            db.session.add(new_flashcard)
+        db.session.commit()
 
-    embedding1 = model.encode(user_answer, convert_to_tensor=True)
-    embedding2 = model.encode(correct_answer, convert_to_tensor=True)
-    similarity = util.pytorch_cos_sim(embedding1, embedding2).item()
-
-    is_correct = similarity > 0.75
-    if is_correct:
-        feedback = "Goed gedaan! Je antwoord is correct."
-    else:
-        feedback = f"Je antwoord was niet helemaal correct. De semantische gelijkenis was {similarity:.2f}. Probeer het opnieuw."
-
-    return jsonify({"correct": is_correct, "feedback": feedback, "similarity": similarity})
-
-# Start de app via waitress, met database creatie in juiste context
 if __name__ == '__main__':
-    from waitress import serve
-    port = int(os.environ.get("PORT", 5000))
-
-    with app.app_context():
-        db.create_all()
-
-    serve(app, host='0.0.0.0', port=port)
+    app.run(debug=True)

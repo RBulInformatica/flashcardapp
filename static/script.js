@@ -4,7 +4,8 @@ function showExamMenu() {
 }
 
 function showOwnFlashcards() {
-    alert("Eigen flashcards zijn nog niet beschikbaar.");
+    hideAll();
+    document.getElementById("own-flashcards-container").classList.remove("hidden");
 }
 
 function showDevelopmentBlog() {
@@ -123,3 +124,45 @@ function goBack() {
 function hideAll() {
     document.querySelectorAll(".menu-container").forEach(el => el.classList.add("hidden"));
 }
+
+// Functionaliteit voor het toevoegen van eigen flashcards via het formulier
+document.getElementById("flashcard-form")?.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const term = document.getElementById("term").value;
+    const definition = document.getElementById("definition").value;
+
+    fetch("/add_flashcard", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            term: term,
+            definition: definition
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        if (data.success) {
+            document.getElementById("term").value = "";
+            document.getElementById("definition").value = "";
+        }
+    });
+});
+
+// Functionaliteit voor het uploaden van een CSV-bestand
+document.getElementById("csv-upload-form")?.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("csvfile", document.querySelector("input[type=file]").files[0]);
+
+    fetch("/upload_csv", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+    });
+});
