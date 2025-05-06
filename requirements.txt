@@ -6,3 +6,5 @@ scipy
 gunicorn
 waitress
 flask_sqlalchemy
+flask_cors
+huggingface_hub[hf_xet]
