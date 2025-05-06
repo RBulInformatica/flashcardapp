@@ -4,13 +4,12 @@ import csv
 import os
 from flask_sqlalchemy import SQLAlchemy
 
-# Zorg dat deze folder overeenkomt met je Render disk mount path
-DATABASE_PATH = '/var/data/flashcards.db'
-
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'csv'}
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
+
+# Gebruik persistente opslaglocatie
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/data/flashcards.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -23,9 +22,8 @@ class Flashcard(db.Model):
     def __repr__(self):
         return f"Flashcard('{self.term}', '{self.definition}')"
 
-# Database aanmaken als die nog niet bestaat
+# Zorg dat de database wordt aangemaakt
 with app.app_context():
-    os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
     db.create_all()
 
 @app.route('/')
@@ -53,10 +51,10 @@ def upload_csv():
             return 'Geen bestand geselecteerd!', 400
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-            file.save(upload_path)
-            process_csv(upload_path)
+            file.save(filepath)
+            process_csv(filepath)
             return redirect(url_for('index'))
     return render_template('upload_csv.html')
 
@@ -83,19 +81,16 @@ def random_flashcard():
     flashcard = Flashcard.query.order_by(db.func.random()).first()
     if flashcard:
         return jsonify({"term": flashcard.term, "definition": flashcard.definition})
-    else:
-        return jsonify({"term": "Geen kaarten", "definition": "Je moet eerst kaarten toevoegen."})
+    return jsonify({"term": "Geen kaarten beschikbaar", "definition": ""})
 
 @app.route('/check_answer', methods=['POST'])
 def check_answer():
     data = request.get_json()
-    user_answer = data.get('user_answer', '').strip().lower()
-    correct_answer = data.get('correct_answer', '').strip().lower()
-
-    is_correct = user_answer == correct_answer
-    feedback = "Juist!" if is_correct else f"Onjuist. Het correcte antwoord is: {correct_answer}"
-
-    return jsonify({"correct": is_correct, "feedback": feedback})
+    user_answer = data.get("user_answer", "").strip().lower()
+    correct_answer = data.get("correct_answer", "").strip().lower()
+    correct = user_answer in correct_answer or correct_answer in user_answer
+    feedback = "Correct!" if correct else f"Onjuist. Het juiste antwoord is: {correct_answer}"
+    return jsonify({"correct": correct, "feedback": feedback})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
