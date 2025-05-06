@@ -2,8 +2,12 @@ services:
   - type: web
     name: flashcardapp
     env: python
-    buildCommand: ""
-    startCommand: "gunicorn app:app"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
       - key: FLASK_ENV
         value: production
+    disk:
+      name: flashcard-storage
+      mountPath: /var/data
+      sizeGB: 1
