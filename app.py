@@ -96,6 +96,10 @@ def check_answer():
     feedback = "Correct!" if correct else f"Onjuist. Het juiste antwoord is: {correct_answer}"
     return jsonify({"correct": correct, "feedback": feedback})
 
+@app.route('/ontwikkelingsblog')
+def ontwikkelingsblog():
+    return render_template('ontwikkelingsblog.html')
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)

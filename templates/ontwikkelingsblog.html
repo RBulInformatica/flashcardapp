@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Ontwikkelingsblog</title>
+</head>
+<body>
+    <h1>Ontwikkelingsblog</h1>
+    <p>Flashcards zijn een veel gebruikte manier om grote hoeveelheden informatie te onthouden. Er is alleen één nadeel, je kent de leerstof, maar begrijpen is wat anders. Als je het begrijpt, dan kan je het ook toepassen. Vanuit hier ontstond het idee om een flashcard website te maken met AI-integratie, zodat de gebruiker het begrip kan uitleggen en het daardoor ook goed kan begrijpen. Dit is geïnspireerd op de Feynman techniek van de natuurkundige Richard Feynman, hierbij moet je ingewikkelde concepten heel simpel uitleggen. 
+
+        De ontwikkeling is begonnen met een plan van aanpak maken. Hierbij heb ik gekozen om te beginnen met het bouwen van een website, met een flask backend, een javascript frontend en html voor de interface. Ook heb ik besloten om SQlite met DBbrowser te gebruiken om de flashcards te bewaren en te gebruiken in een database. Om AI te integreren is gekeken naar verschillende opties. Uiteindelijk heb ik Huggingface gekozen, een python-pakket gemaakt voor natuurlijke taalverwerking. Eén database is gebruikt op basis van een online gevonden begrippenlijst over het onderdeel 'immuunsystemen' voor het vak biologie. 
+        
+        Na het programmeren ben ik begonnen met het testen van de site. Op dit moment was dit nog zonder ai integratie en werkte nog niet alles. Daarna heb ik functionele flashcards gemaakt en heb ik een functie toegevoegd om alles te kunnen bekijken met alle menu's compleet. 
+        
+        Nadat ik tevreden was over de functionaliteit ben ik begonnen met de AI-integratie. Ik heb een extra optie toegevoegd om naast op normale manier te oefenen te oefenen met ai. Je krijgt als gebruiker dan een score op basis van semantische gelijkenis. Als deze hoog genoeg is dan kan je naar de volgende. Bij het testen waren er een aantal problemen, ik was en ben nog steeds niet tevreden met de correctheid. Aangezien dit model niet zo goed getraind of ontwikkeld is als chatgpt, copilot of anderen keurde het model correcte antwoorden in een andere vorm dan het antwoord model fout. Dit zorgt ervoor dat de gebruiker nog steeds een redelijk vergelijkbaar antwoord moet invullen en dus uit het hoofd moet leren. De beste manier om dit op te lossen zou het gebruiken van een ander taalverwerkingsmodel zoals chatgpt zijn. Hieraan zijn echter kosten verbonden. 
+        
+        Na de basis van de website te maken, wilde ik hier een werkende en bezoekbare website van maken. Eerst heb ik gekeken naar Firebase, van google. Na het installeren van firebase en node.js kwam ik erachter dat ik hiervoor de hele structuur van mijn project voor moest veranderen. Na wat te zoeken kwam ik erachter dat ik een programma genaamd render kan gebruiken om een website te hosten en de huidige structuur kan behouden. Hiervoor moest ik een github account maken en git installeren. Ik heb vervolgens een repository gemaakt vanuit de bestanden op mijn computer. Ook heb ik render.yaml en requirements.txt bestanden toegevoegd. Dit heb ik verbonden met render en gedeployed. Hierbij loop ik tegen een probleem aan meet 'No open ports detected'. Het probleem heb ik opgelost door waitress toe te voegen. 
+        
+        Nadat de website werkte via render, was er een nieuw probleem. De flashcards database was niet verbonden met render. Eerst heb ik geprobeerd de database los aan te maken met een ander python script vanuit het csv bestand. Dit werkte niet. Hierna heb ik geprobeerd om databases te vermijden. Na veel oplossingen te proberen is het uiteindelijk niet gelukt. Ik vermoed dat het opslaan van informatie niet werkt bij render. Zelf flashcards toevoegen voor de gebruiker lijkt ook niet te werken. 
+        
+        Op github zijn alle aanpassingen te vinden. Ook is bijgeleverd de lokale versie, voor de aanpassingen met render. 
+        
+        Het belangrijkste is wat ik hier van heb geleerd. Met dit project heb ik veel verschillende informatica technieken gebruikt. Een lijst hiervan is hieronder:
+        1. Programmeren in verschillende talen, javascript, python en html.
+        2. Webontwikkeling met Flask.
+        3. Basic AI integratie. 
+        4. Ik heb databases gebruikt en geïntegreerd.
+        5. Frontend en backend. 
+        6. Gebruik van git. 
+        </p>
+    </div>
+</body>
+</html>
