@@ -67,13 +67,13 @@
 </head>
 <body>
     <div class="logo">MeerDanFlashcards</div>
-    
+
     <div id="start-menu" class="menu-container">
         <button class="button" onclick="showExamMenu()">VWO Eindexamen</button>
         <button class="button" onclick="showOwnFlashcards()">Eigen Flashcards</button>
-        <button class="button" onclick="showDevelopmentBlog()">Ontwikkelings blog</button>
+        <button class="button" onclick="showDevelopmentBlog()">Ontwikkelingsblog</button>
     </div>
-    
+
     <div id="exam-menu" class="menu-container hidden">
         <h2>Kies een vak</h2>
         <button class="button" onclick="showBiologyTopics()">Biologie</button>
@@ -81,14 +81,14 @@
         <button class="button" disabled>Scheikunde (Nog niet beschikbaar)</button>
         <button class="button" onclick="goBack()">Terug</button>
     </div>
-    
+
     <div id="biology-topics" class="menu-container hidden">
         <h2>Biologie Onderwerpen</h2>
         <button class="button" onclick="showImmuneSystemOptions()">Immuunsysteem</button>
         <button class="button" disabled>Overige onderwerpen (Nog niet beschikbaar)</button>
         <button class="button" onclick="showExamMenu()">Terug</button>
     </div>
-    
+
     <div id="immune-system-options" class="menu-container hidden">
         <h2>Immuunsysteem</h2>
         <button class="button" onclick="showFlashcards()">Zie Begrippen</button>
@@ -96,7 +96,7 @@
         <button class="button" onclick="startAIPractice()">Oefenen met AI</button>
         <button class="button" onclick="showBiologyTopics()">Terug</button>
     </div>
-    
+
     <div id="flashcards-container" class="menu-container hidden">
         <h2>Begrippen en Betekenissen</h2>
         <table id="flashcards-table">
@@ -110,7 +110,7 @@
         </table>
         <button class="button" onclick="showImmuneSystemOptions()">Terug</button>
     </div>
-    
+
     <div id="practice-container" class="menu-container hidden">
         <h2>Oefenen</h2>
         <div id="flashcard" class="flashcard" onclick="flipCard()">Klik om om te draaien</div>
@@ -124,7 +124,6 @@
         <div id="ai-flashcard" class="flashcard"></div>
         <input type="text" id="ai-answer" placeholder="Typ je antwoord hier">
         <button class="button" onclick="submitAIAnswer()">Controleer met AI</button>
-        <!-- Feedback container -->
         <div id="feedback" style="font-size: 16px; color: red; margin-top: 10px;"></div>
         <button class="button" onclick="showImmuneSystemOptions()">Terug</button>
     </div>
@@ -153,32 +152,40 @@
     <!-- Ontwikkelingsblog Sectie -->
     <div id="development-blog-container" class="menu-container hidden">
         <h2>Ontwikkelingsblog</h2>
-        <div id="development-blog-content">
+        <div id="development-blog-content" style="max-width: 800px; text-align: left;">
             <p>
-                Deze blog houdt mijn voortgang bij voor het project MeerDanFlashcards. Het doel van dit project is om een eenvoudige, maar effectieve app te maken waarmee gebruikers flashcards kunnen maken en gebruiken voor verschillende vakken. De belangrijkste functie van de app is om flashcards toe te voegen, CSV-bestanden te uploaden en flashcards te oefenen met behulp van AI.
-                <br><br>
-                Flashcards zijn een veel gebruikte manier om grote hoeveelheden informatie te onthouden. Er is alleen één nadeel, je kent de leerstof, maar begrijpen is wat anders. Als je het begrijpt, dan kan je het ook toepassen. Vanuit hier ontstond het idee om een flashcard website te maken met AI-integratie, zodat de gebruiker het begrip kan uitleggen en het daardoor ook goed kan begrijpen. Dit is geïnspireerd op de Feynman techniek van de natuurkundige Richard Feynman, hierbij moet je ingewikkelde concepten heel simpel uitleggen. 
-
-De ontwikkeling is begonnen met een plan van aanpak maken. Hierbij heb ik gekozen om te beginnen met het bouwen van een website, met een flask backend, een javascript frontend en html voor de interface. Ook heb ik besloten om SQlite met DBbrowser te gebruiken om de flashcards te bewaren en te gebruiken in een database. Om AI te integreren is gekeken naar verschillende opties. Uiteindelijk heb ik Huggingface gekozen, een python-pakket gemaakt voor natuurlijke taalverwerking. Eén database is gebruikt op basis van een online gevonden begrippenlijst over het onderdeel 'immuunsystemen' voor het vak biologie. 
-
-Na het programmeren ben ik begonnen met het testen van de site. Op dit moment was dit nog zonder ai integratie en werkte nog niet alles. Daarna heb ik functionele flashcards gemaakt en heb ik een functie toegevoegd om alles te kunnen bekijken met alle menu's compleet. 
-
-Nadat ik tevreden was over de functionaliteit ben ik begonnen met de AI-integratie. Ik heb een extra optie toegevoegd om naast op normale manier te oefenen te oefenen met ai. Je krijgt als gebruiker dan een score op basis van semantische gelijkenis. Als deze hoog genoeg is dan kan je naar de volgende. Bij het testen waren er een aantal problemen, ik was en ben nog steeds niet tevreden met de correctheid. Aangezien dit model niet zo goed getraind of ontwikkeld is als chatgpt, copilot of anderen keurde het model correcte antwoorden in een andere vorm dan het antwoord model fout. Dit zorgt ervoor dat de gebruiker nog steeds een redelijk vergelijkbaar antwoord moet invullen en dus uit het hoofd moet leren. De beste manier om dit op te lossen zou het gebruiken van een ander taalverwerkingsmodel zoals chatgpt zijn. Hieraan zijn echter kosten verbonden. 
-
-Na de basis van de website te maken, wilde ik hier een werkende en bezoekbare website van maken. Eerst heb ik gekeken naar Firebase, van google. Na het installeren van firebase en node.js kwam ik erachter dat ik hiervoor de hele structuur van mijn project voor moest veranderen. Na wat te zoeken kwam ik erachter dat ik een programma genaamd render kan gebruiken om een website te hosten en de huidige structuur kan behouden. Hiervoor moest ik een github account maken en git installeren. Ik heb vervolgens een repository gemaakt vanuit de bestanden op mijn computer. Ook heb ik render.yaml en requirements.txt bestanden toegevoegd. Dit heb ik verbonden met render en gedeployed. Hierbij loop ik tegen een probleem aan meet 'No open ports detected'. Het probleem heb ik opgelost door waitress toe te voegen. 
-
-Nadat de website werkte via render, was er een nieuw probleem. De flashcards database was niet verbonden met render. Eerst heb ik geprobeerd de database los aan te maken met een ander python script vanuit het csv bestand. Dit werkte niet. Hierna heb ik geprobeerd om databases te vermijden. Na veel oplossingen te proberen is het uiteindelijk niet gelukt. 
-
-Op github zijn alle aanpassingen te vinden. Ook is bijgeleverd de lokale versie, voor de aanpassingen met render. 
-
-Het belangrijkste is wat ik hier van heb geleerd. Met dit project heb ik veel verschillende informatica technieken gebruikt. Een lijst hiervan is hieronder:
-1. Programmeren in verschillende talen, javascript, python en html.
-2. Webontwikkeling met Flask.
-3. Basic AI integratie. 
-4. Ik heb databases gebruikt en geïntegreerd.
-5. Frontend en backend. 
-6. Gebruik van git. 
+                Deze blog houdt mijn voortgang bij voor het project <strong>MeerDanFlashcards</strong>. Het doel van dit project is om een eenvoudige, maar effectieve app te maken waarmee gebruikers flashcards kunnen maken en gebruiken voor verschillende vakken. De belangrijkste functies zijn: flashcards toevoegen, CSV-bestanden uploaden, en flashcards oefenen met behulp van AI.
             </p>
+            <p>
+                Flashcards zijn een veelgebruikte manier om grote hoeveelheden informatie te onthouden. Er is echter één nadeel: je kent de leerstof, maar begrijpen is iets anders. Als je het begrijpt, dan kun je het ook toepassen. Vanuit hier ontstond het idee om een flashcardwebsite te maken met AI-integratie, zodat de gebruiker het begrip kan uitleggen en het daardoor ook echt begrijpt. Dit is geïnspireerd op de Feynman-techniek van natuurkundige Richard Feynman, waarbij je ingewikkelde concepten simpel moet uitleggen.
+            </p>
+            <p>
+                De ontwikkeling begon met het maken van een plan van aanpak. Ik koos ervoor om een website te bouwen met een Flask-backend, een JavaScript-frontend en HTML voor de interface. Ook besloot ik om SQLite in combinatie met DB Browser te gebruiken om de flashcards op te slaan in een database. Voor AI-integratie heb ik verschillende opties bekeken. Uiteindelijk heb ik gekozen voor Hugging Face, een Python-pakket voor natuurlijke taalverwerking. Eén database is gebaseerd op een online gevonden begrippenlijst over het onderwerp 'immuunsystemen' voor het vak biologie.
+            </p>
+            <p>
+                Na het programmeren begon ik met het testen van de site. Op dat moment was de AI-integratie nog niet aanwezig en werkte nog niet alles. Daarna heb ik functionele flashcards gemaakt en een functie toegevoegd om alle kaarten te kunnen bekijken via een compleet menu.
+            </p>
+            <p>
+                Toen ik tevreden was over de basisfunctionaliteit, begon ik met de AI-integratie. Ik voegde een extra optie toe om naast normaal oefenen ook met AI te oefenen. Je krijgt als gebruiker dan een score op basis van semantische gelijkenis. Als deze hoog genoeg is, mag je naar de volgende kaart. Tijdens het testen bleek echter dat het model soms correcte antwoorden afkeurde als ze in een andere vorm werden gegeven. Aangezien dit model niet zo krachtig is als ChatGPT, Copilot of andere modellen, moet de gebruiker nog steeds een redelijk vergelijkbaar antwoord geven. De beste oplossing zou zijn om een ander taalverwerkingsmodel zoals ChatGPT te gebruiken, maar daaraan zijn kosten verbonden.
+            </p>
+            <p>
+                Nadat de basis van de website werkte, wilde ik hiervan een werkende en publiek toegankelijke versie maken. Eerst probeerde ik Firebase van Google. Na het installeren van Firebase en Node.js bleek dat ik daarvoor de hele structuur van mijn project moest aanpassen. Na verder zoeken ontdekte ik Render. Hiermee kon ik de bestaande structuur behouden. Hiervoor heb ik een GitHub-account aangemaakt en Git geïnstalleerd. Daarna maakte ik een repository vanuit mijn lokale bestanden en voegde ik de bestanden <code>render.yaml</code> en <code>requirements.txt</code> toe. Ik koppelde dit aan Render en voerde een deployment uit. Hierbij kreeg ik de foutmelding “No open ports detected”, die ik uiteindelijk oploste door Waitress toe te voegen.
+            </p>
+            <p>
+                Toen de website via Render werkte, ontstond een nieuw probleem: de flashcards-database werkte niet. Eerst probeerde ik de database handmatig aan te maken via een Python-script op basis van het CSV-bestand, maar dit werkte niet. Daarna probeerde ik de database te vermijden, maar ook dit lukte niet. Uiteindelijk is het niet gelukt om de functionaliteit volledig werkend te krijgen op Render.
+            </p>
+            <p>
+                Alle aanpassingen zijn terug te vinden op GitHub. Er is ook een lokale versie bijgevoegd met de aanpassingen voor Render.
+            </p>
+            <p><strong>Wat heb ik hiervan geleerd?</strong></p>
+            <ul>
+                <li>Programmeren in verschillende talen: JavaScript, Python en HTML.</li>
+                <li>Webontwikkeling met Flask.</li>
+                <li>Basis AI-integratie.</li>
+                <li>Werken met databases en integratie.</li>
+                <li>Frontend- en backendontwikkeling.</li>
+                <li>Gebruik van Git en GitHub.</li>
+            </ul>
         </div>
         <button class="button" onclick="goBack()">Terug</button>
     </div>

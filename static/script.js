@@ -9,7 +9,7 @@ function showOwnFlashcards() {
 }
 
 function showDevelopmentBlog() {
-    alert("De ontwikkelingsblog is nog in aanbouw.");
+    window.location.href = "/ontwikkelingsblog";
 }
 
 function showBiologyTopics() {
@@ -60,17 +60,13 @@ function loadNewFlashcard() {
 
 function flipCard() {
     if (currentFlashcard) {
-        if (showingDefinition) {
-            document.getElementById("flashcard").textContent = currentFlashcard.term;
-        } else {
-            document.getElementById("flashcard").textContent = currentFlashcard.definition;
-        }
+        document.getElementById("flashcard").textContent =
+            showingDefinition ? currentFlashcard.term : currentFlashcard.definition;
         showingDefinition = !showingDefinition;
     }
 }
 
 function submitAnswer(correct) {
-    // Dit is placeholderlogica voor handmatige evaluatie
     alert(correct ? "Juist gekozen!" : "Onjuist gekozen!");
     loadNewFlashcard();
 }
@@ -99,21 +95,19 @@ function submitAIAnswer() {
 
     fetch("/check_answer", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             user_answer: userAnswer,
             correct_answer: currentAIFlashcard.definition
         })
     })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("feedback").textContent = data.feedback;
-        if (data.correct) {
-            setTimeout(loadNewAIFlashcard, 2000);
-        }
-    });
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("feedback").textContent = data.feedback;
+            if (data.correct) {
+                setTimeout(loadNewAIFlashcard, 2000);
+            }
+        });
 }
 
 function goBack() {
@@ -125,7 +119,7 @@ function hideAll() {
     document.querySelectorAll(".menu-container").forEach(el => el.classList.add("hidden"));
 }
 
-// Functionaliteit voor het toevoegen van eigen flashcards via het formulier
+// Flashcard toevoegen
 document.getElementById("flashcard-form")?.addEventListener("submit", function (event) {
     event.preventDefault();
     const term = document.getElementById("term").value;
@@ -133,36 +127,31 @@ document.getElementById("flashcard-form")?.addEventListener("submit", function (
 
     fetch("/add_flashcard", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            term: term,
-            definition: definition
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ term, definition })
     })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message);
-        if (data.success) {
-            document.getElementById("term").value = "";
-            document.getElementById("definition").value = "";
-        }
-    });
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                document.getElementById("term").value = "";
+                document.getElementById("definition").value = "";
+            }
+        });
 });
 
-// Functionaliteit voor het uploaden van een CSV-bestand
+// CSV-upload
 document.getElementById("csv-upload-form")?.addEventListener("submit", function (event) {
     event.preventDefault();
     const formData = new FormData();
-    formData.append("csvfile", document.querySelector("input[type=file]").files[0]);
+    formData.append("file", document.querySelector("input[type=file]").files[0]);
 
     fetch("/upload_csv", {
         method: "POST",
         body: formData
     })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message);
-    });
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+        });
 });

@@ -3,31 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Ontwikkelingsblog</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Ontwikkelingsblog</h1>
-    <p>Flashcards zijn een veel gebruikte manier om grote hoeveelheden informatie te onthouden. Er is alleen één nadeel, je kent de leerstof, maar begrijpen is wat anders. Als je het begrijpt, dan kan je het ook toepassen. Vanuit hier ontstond het idee om een flashcard website te maken met AI-integratie, zodat de gebruiker het begrip kan uitleggen en het daardoor ook goed kan begrijpen. Dit is geïnspireerd op de Feynman techniek van de natuurkundige Richard Feynman, hierbij moet je ingewikkelde concepten heel simpel uitleggen. 
+    <div class="container">
+        <header>
+            <h1>Ontwikkelingsblog</h1>
+        </header>
 
-        De ontwikkeling is begonnen met een plan van aanpak maken. Hierbij heb ik gekozen om te beginnen met het bouwen van een website, met een flask backend, een javascript frontend en html voor de interface. Ook heb ik besloten om SQlite met DBbrowser te gebruiken om de flashcards te bewaren en te gebruiken in een database. Om AI te integreren is gekeken naar verschillende opties. Uiteindelijk heb ik Huggingface gekozen, een python-pakket gemaakt voor natuurlijke taalverwerking. Eén database is gebruikt op basis van een online gevonden begrippenlijst over het onderdeel 'immuunsystemen' voor het vak biologie. 
-        
-        Na het programmeren ben ik begonnen met het testen van de site. Op dit moment was dit nog zonder ai integratie en werkte nog niet alles. Daarna heb ik functionele flashcards gemaakt en heb ik een functie toegevoegd om alles te kunnen bekijken met alle menu's compleet. 
-        
-        Nadat ik tevreden was over de functionaliteit ben ik begonnen met de AI-integratie. Ik heb een extra optie toegevoegd om naast op normale manier te oefenen te oefenen met ai. Je krijgt als gebruiker dan een score op basis van semantische gelijkenis. Als deze hoog genoeg is dan kan je naar de volgende. Bij het testen waren er een aantal problemen, ik was en ben nog steeds niet tevreden met de correctheid. Aangezien dit model niet zo goed getraind of ontwikkeld is als chatgpt, copilot of anderen keurde het model correcte antwoorden in een andere vorm dan het antwoord model fout. Dit zorgt ervoor dat de gebruiker nog steeds een redelijk vergelijkbaar antwoord moet invullen en dus uit het hoofd moet leren. De beste manier om dit op te lossen zou het gebruiken van een ander taalverwerkingsmodel zoals chatgpt zijn. Hieraan zijn echter kosten verbonden. 
-        
-        Na de basis van de website te maken, wilde ik hier een werkende en bezoekbare website van maken. Eerst heb ik gekeken naar Firebase, van google. Na het installeren van firebase en node.js kwam ik erachter dat ik hiervoor de hele structuur van mijn project voor moest veranderen. Na wat te zoeken kwam ik erachter dat ik een programma genaamd render kan gebruiken om een website te hosten en de huidige structuur kan behouden. Hiervoor moest ik een github account maken en git installeren. Ik heb vervolgens een repository gemaakt vanuit de bestanden op mijn computer. Ook heb ik render.yaml en requirements.txt bestanden toegevoegd. Dit heb ik verbonden met render en gedeployed. Hierbij loop ik tegen een probleem aan meet 'No open ports detected'. Het probleem heb ik opgelost door waitress toe te voegen. 
-        
-        Nadat de website werkte via render, was er een nieuw probleem. De flashcards database was niet verbonden met render. Eerst heb ik geprobeerd de database los aan te maken met een ander python script vanuit het csv bestand. Dit werkte niet. Hierna heb ik geprobeerd om databases te vermijden. Na veel oplossingen te proberen is het uiteindelijk niet gelukt. Ik vermoed dat het opslaan van informatie niet werkt bij render. Zelf flashcards toevoegen voor de gebruiker lijkt ook niet te werken. 
-        
-        Op github zijn alle aanpassingen te vinden. Ook is bijgeleverd de lokale versie, voor de aanpassingen met render. 
-        
-        Het belangrijkste is wat ik hier van heb geleerd. Met dit project heb ik veel verschillende informatica technieken gebruikt. Een lijst hiervan is hieronder:
-        1. Programmeren in verschillende talen, javascript, python en html.
-        2. Webontwikkeling met Flask.
-        3. Basic AI integratie. 
-        4. Ik heb databases gebruikt en geïntegreerd.
-        5. Frontend en backend. 
-        6. Gebruik van git. 
-        </p>
+        <section class="blog-entry">
+            <p>Flashcards zijn een veelgebruikte manier om grote hoeveelheden informatie te onthouden. Er is alleen één nadeel: je kent de leerstof, maar begrijpen is iets anders. Als je het begrijpt, dan kun je het ook toepassen. Vanuit hier ontstond het idee om een flashcardwebsite te maken met AI-integratie, zodat de gebruiker het begrip kan uitleggen en het daardoor ook goed kan begrijpen. Dit is geïnspireerd op de Feynman-techniek van natuurkundige Richard Feynman, waarbij je ingewikkelde concepten heel simpel moet uitleggen.</p>
+
+            <p>De ontwikkeling is begonnen met het maken van een plan van aanpak. Hierbij heb ik gekozen om te beginnen met het bouwen van een website met een Flask-backend, een JavaScript-frontend en HTML voor de interface. Ook heb ik besloten om SQLite met DB Browser te gebruiken om de flashcards op te slaan in een database. Voor de AI-integratie is gekeken naar verschillende opties. Uiteindelijk heb ik gekozen voor Hugging Face, een Python-pakket voor natuurlijke taalverwerking. Eén database is gebaseerd op een online gevonden begrippenlijst over het onderwerp 'immuunsystemen' voor het vak biologie.</p>
+
+            <p>Na het programmeren ben ik begonnen met het testen van de site. Op dat moment was er nog geen AI-integratie en werkte nog niet alles. Daarna heb ik functionele flashcards toegevoegd en een functie gemaakt om alle kaarten te bekijken via een volledig menu.</p>
+
+            <p>Nadat ik tevreden was over de basisfunctionaliteit, ben ik begonnen met de AI-integratie. Ik heb een extra optie toegevoegd om naast normaal oefenen ook met AI te oefenen. De gebruiker krijgt dan een score op basis van semantische gelijkenis. Als deze score hoog genoeg is, kan je naar de volgende kaart. Tijdens het testen bleek dat het model soms correcte antwoorden afkeurde als ze in een andere vorm gegeven werden. Aangezien dit model niet zo goed getraind is als ChatGPT, Copilot of andere modellen, moet de gebruiker nog steeds een redelijk vergelijkbaar antwoord geven. De beste manier om dit op te lossen zou zijn door een ander taalverwerkingsmodel zoals ChatGPT te gebruiken, maar daaraan zijn kosten verbonden.</p>
+
+            <p>Na de basis van de website te hebben gemaakt, wilde ik hiervan een werkende en bezoekbare versie maken. Eerst heb ik gekeken naar Firebase van Google. Na het installeren van Firebase en Node.js kwam ik erachter dat ik daarvoor de hele structuur van mijn project moest aanpassen. Na wat verder zoeken ontdekte ik dat ik Render kon gebruiken om een website te hosten zonder de structuur te wijzigen. Hiervoor moest ik een GitHub-account aanmaken en Git installeren. Vervolgens heb ik een repository gemaakt vanuit de bestanden op mijn computer. Ook heb ik <code>render.yaml</code> en <code>requirements.txt</code> toegevoegd. Deze heb ik verbonden met Render en gedeployed. Daarbij liep ik tegen het probleem aan "No open ports detected", wat ik heb opgelost door Waitress toe te voegen.</p>
+
+            <p>Toen de website via Render werkte, ontstond er een nieuw probleem: de flashcards-database was niet verbonden met Render. Eerst heb ik geprobeerd de database handmatig aan te maken met een ander Python-script vanuit een CSV-bestand, maar dit werkte niet. Daarna probeerde ik databases te vermijden, maar ook dat lukte niet. Ik vermoed dat het opslaan van informatie niet werkt op Render. Zelf flashcards toevoegen voor de gebruiker lijkt ook niet te werken. Uiteindelijk is het gelukt door SQLalchemy te vermijden en terug te gaan naar de oude werkwijze met SQLight 3. Ook heb ik de ontwikkelingsblog toegevoegd met een apart html bestand waar naar gelinkt wordt en heb ik voor stijl een styles.css bestand gebruikt.</p>
+
+            <p>Op GitHub zijn alle aanpassingen te vinden. Ook is een lokale versie bijgevoegd met aanpassingen voor Render.</p>
+
+            <p><strong>Wat heb ik hiervan geleerd?</strong></p>
+            <ul>
+                <li>Programmeren in verschillende talen: JavaScript, Python en HTML.</li>
+                <li>Webontwikkeling met Flask.</li>
+                <li>Basis AI-integratie.</li>
+                <li>Werken met databases en integratie.</li>
+                <li>Frontend- en backendontwikkeling.</li>
+                <li>Gebruik van Git en GitHub.</li>
+            </ul>
+        </section>
     </div>
 </body>
 </html>
